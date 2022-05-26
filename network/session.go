@@ -103,7 +103,7 @@ func (session *Session) Connect() error {
 	if err != nil {
 		return err
 	}
-	if connectPacket.packet.length == 58 {
+	if connectPacket.Packet.length == 58 {
 		session.PutBytes(connectPacket.buffer...)
 		err = session.Write()
 		if err != nil {
@@ -333,7 +333,7 @@ func (session *Session) readPacket() (PacketInterface, error) {
 		pck := newRedirectPacketFromData(packetData)
 		dataLen := binary.BigEndian.Uint16(packetData[8:])
 		var data string
-		if pck.packet.length <= pck.packet.dataOffset {
+		if pck.Packet.length <= pck.packet.dataOffset {
 			packetData, err = readPacketData(session.conn)
 			dataPck := newDataPacketFromData(packetData)
 			data = string(dataPck.buffer)
@@ -342,7 +342,7 @@ func (session *Session) readPacket() (PacketInterface, error) {
 		}
 		//fmt.Println("data returned: ", data)
 		length := strings.Index(data, "\x00")
-		if pck.packet.flag&2 != 0 && length > 0 {
+		if pck.Packet.flag&2 != 0 && length > 0 {
 			pck.redirectAddr = data[:length]
 			pck.reconnectData = data[length:]
 		} else {
